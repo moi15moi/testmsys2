@@ -1,0 +1,46 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+
+jobs:
+  build:
+    name: "Test"
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: 'msys2 {0}'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        repository: FFMS/ffms2
+
+    - name: Install platform-specific requirements (Windows)
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        install: >-
+          mingw-w64-clang-x86_64-autotools
+          mingw-w64-clang-x86_64-toolchain
+
+    - name: Install platform-specific requirements (Windows)
+      if: runner.os == 'Windows' && runner.arch == 'ARM64'
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: CLANGARM64
+        path-type: inherit
+        install: >-
+          mingw-w64-x86_64-autotools
+          mingw-w64-x86_64-ffmpeg
+          mingw-w64-x86_64-toolchain
+          mingw-w64-x86_64-python
+
+    - name: Run cibuildwheel
+      run: |
+        python3 test.py
