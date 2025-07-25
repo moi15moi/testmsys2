@@ -33,7 +33,7 @@ jobs:
           autotools
           mingw-w64-x86_64-ffmpeg
           mingw-w64-x86_64-toolchain
-          python
+          mingw-w64-x86_64-python
 
     - name: Run test.py
       run: |
